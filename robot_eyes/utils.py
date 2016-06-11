@@ -54,7 +54,7 @@ def what_do_you_see(query, image):
 
 def what_color(query, image):
     # Get the colors
-    colors = image["responses"][0]["imagePropertiesAnnotation"].get("dominantColors")
+    colors = image["imagePropertiesAnnotation"].get("dominantColors")
     if not colors:
         return "I can't see any dominant color in here, put it closer please!"
 
