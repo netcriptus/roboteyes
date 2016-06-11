@@ -1,3 +1,5 @@
+from webcolors import rgb_to_name
+
 BAD_QUESTION = 'Can you rephrase that question?'
 MIN_ACCURACY = 0.6
 
@@ -28,7 +30,19 @@ def what_do_you_see(query, image):
 
 
 def what_color(query, image):
-    return ''
+    # Get the colors
+    import pdb; pdb.set_trace()
+    colors = image["responses"][0]["imagePropertiesAnnotation"].get("dominantColors")
+    print(colors)
+    if not colors:
+        return "I can't see any dominant color in here, put it closer please!"
+
+    primary_color = colors[0]
+    if primary_color["score"] <= 0.3:
+        return "It seems to be quite colorful around here!"
+
+    name = rgb_to_name((primary_color["color"][0], primary_color["color"][1], primary_color["color"][2]))
+    return "It seem your {} is {}".format(query, name)
 
 
 def is_there(query, image):
