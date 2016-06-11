@@ -1,3 +1,4 @@
+import json
 from random import shuffle
 
 import nltk
@@ -5,9 +6,11 @@ from math import ceil
 
 import pickle
 from nltk.classify.scikitlearn import SklearnClassifier
+from nltk import word_tokenize, stem, tokenize, metrics
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.naive_bayes import MultinomialNB, BernoulliNB
 from sklearn.svm import SVC, LinearSVC, NuSVC
+from watson_developer_cloud import NaturalLanguageClassifierV1, WatsonDeveloperCloudService
 
 CLASS_WHAT_DO_YOU_SEE = "WhatDoYouSee"
 ClASS_WHERE_IS = "WhereIs"
@@ -59,19 +62,42 @@ labeled_sentences += [
     ("Awesome is what awesome is", CLASS_UNKNOWN)
 ]
 
-def feature_set_for_input(input):
-    for key, values in features.items():
-        if input in values:
-            return {'class': key}
-    return {'class': 'Unknown'}
+stemmer = stem.PorterStemmer()
 
-shuffle(labeled_sentences)
+#
+# def normalize(s):
+#     words = tokenize.wordpunct_tokenize(s.lower().strip())
+#     return ' '.join([stemmer.stem(w) for w in words])
+#
+#
+# def fuzzy_match(s1, s2, max_dist=3):
+#     return metrics.edit_distance(normalize(s1), normalize(s2)) <= max_dist
+#
+#
+# def feature_set_for_input(input):
+#     tokens = word_tokenize(input)
+#
+#     features = ["what", "color", "find", "see"]
+#     result = {}
+#     for feature in features:
+#         result[feature] = sum([1 if fuzzy_match(t, feature) else 0 for t in tokens])
+#
+#     return result
+#
+# shuffle(labeled_sentences)
+#
+# feature_sets = [(feature_set_for_input(sentence), sentence_class) for (sentence, sentence_class) in labeled_sentences]
+# cutting_point = ceil(len(feature_sets) * 0.7)
+# train_set, test_set = feature_sets[cutting_point:], feature_sets[:cutting_point]
+#
+# classifiers = [MultinomialNB, BernoulliNB, LogisticRegression, SGDClassifier, SVC, LinearSVC, NuSVC]
 
-feature_sets = [(feature_set_for_input(sentence), sentence_class) for (sentence, sentence_class) in labeled_sentences]
-cutting_point = ceil(len(feature_sets) * 0.7)
-train_set, test_set = feature_sets[cutting_point:], feature_sets[:cutting_point]
 
-classifiers = [MultinomialNB, BernoulliNB, LogisticRegression, SGDClassifier, SVC, LinearSVC, NuSVC]
+class RobotEyesNaturalLanguageClassifierV1(NaturalLanguageClassifierV1):
+    default_url = 'https://gateway.watsonplatform.net/natural-language-classifier/api'
+
+    def __init__(self, url=default_url, api_key=None):
+        WatsonDeveloperCloudService.__init__(self, 'natural_language_classifier', url, api_key=api_key)
 
 if __name__ == "__main__":
 
@@ -80,27 +106,41 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a NLTK model to categorize input questions.')
     parser.add_argument('mode', type=str, help='The mode this script should run in')
     args = parser.parse_args()
+    #
+    # if args.mode == "train":
+    #     best_score = 0.0
+    #     best_classifier = None
+    #     for clazz in classifiers:
+    #         nltk_classifier = SklearnClassifier(clazz())
+    #         nltk_classifier.train(train_set)
+    #
+    #         score = nltk.classify.accuracy(nltk_classifier, test_set)
+    #
+    #         if score > best_score:
+    #             best_classifier = nltk_classifier
+    #             best_score = score
+    #
+    #         print("{0} accuracy: {1}%".format(clazz.__name__, score * 100))
+    #
+    #     # Save the best classifier that was found
+    #     file = open("classifier.pickle", "wb")
+    #     pickle.dump(best_classifier, file)
+    #     file.close()
+    # elif args.mode == "test":
+    #     classifier = pickle.load(open("classifier.pickle", "rb"))
+    #     while True:
+    #         print(classifier.classify(feature_set_for_input(input("Give me some data:"))))
 
+    natural_language_classifier = RobotEyesNaturalLanguageClassifierV1(api_key='6f9cdb76ca40cc55c4a87ef22bce7a4a3f4aea47')
+
+    classifiers = natural_language_classifier.list()
+    print(json.dumps(classifiers, indent=2))
+
+    # create a classifier
     if args.mode == "train":
-        best_score = 0.0
-        best_classifier = None
-        for clazz in classifiers:
-            nltk_classifier = SklearnClassifier(clazz())
-            nltk_classifier.train(train_set)
+        with open('test.csv', 'rb') as training_data:
+            print(json.dumps(natural_language_classifier.create(training_data=training_data, name='weather'), indent=2))
 
-            score = nltk.classify.accuracy(nltk_classifier, test_set)
-
-            if score > best_score:
-                best_classifier = nltk_classifier
-                best_score = score
-
-            print("{0} accuracy: {1}%".format(clazz.__name__, score * 100))
-
-        # Save the best classifier that was found
-        file = open("classifier.pickle", "wb")
-        pickle.dump(best_classifier, file)
-        file.close()
-    elif args.mode == "test":
-        classifier = pickle.load(open("classifier.pickle", "rb"))
-        while True:
-            print(classifier.classify(feature_set_for_input(input("Give me some data:"))))
+    else:
+        classes = natural_language_classifier.classify('3a84d1x62-nlc-18096', input("Give me some data"))
+        print(json.dumps(classes, indent=2))
