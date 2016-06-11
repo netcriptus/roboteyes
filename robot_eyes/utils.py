@@ -1,3 +1,4 @@
+import webcolors
 from webcolors import rgb_to_name
 
 BAD_QUESTION = 'Can you rephrase that question?'
@@ -21,6 +22,25 @@ def analyze(user_query, annotated_image):
     return query_classes[query_class].__call__(search_query, annotated_image)
 
 
+def closest_colour(requested_colour):
+    min_colours = {}
+    for key, name in webcolors.css3_hex_to_names.items():
+        r_c, g_c, b_c = webcolors.hex_to_rgb(key)
+        rd = (r_c - requested_colour[0]) ** 2
+        gd = (g_c - requested_colour[1]) ** 2
+        bd = (b_c - requested_colour[2]) ** 2
+        min_colours[(rd + gd + bd)] = name
+    return min_colours[min(min_colours.keys())]
+
+def get_colour_name(requested_colour):
+    try:
+        closest_name = actual_name = webcolors.rgb_to_name(requested_colour)
+    except ValueError:
+        closest_name = closest_colour(requested_colour)
+        actual_name = None
+    return actual_name, closest_name
+
+
 def where_is(query, image):
     return ''
 
@@ -31,18 +51,20 @@ def what_do_you_see(query, image):
 
 def what_color(query, image):
     # Get the colors
-    import pdb; pdb.set_trace()
     colors = image["responses"][0]["imagePropertiesAnnotation"].get("dominantColors")
-    print(colors)
     if not colors:
         return "I can't see any dominant color in here, put it closer please!"
 
-    primary_color = colors[0]
+    primary_color = colors["colors"][0]
     if primary_color["score"] <= 0.3:
         return "It seems to be quite colorful around here!"
 
-    name = rgb_to_name((primary_color["color"][0], primary_color["color"][1], primary_color["color"][2]))
-    return "It seem your {} is {}".format(query, name)
+    actual_color, closest_color = get_colour_name((primary_color["color"]["red"], primary_color["color"]["green"], primary_color["color"]["blue"]))
+    template = "It seem your {} is {}"
+    if actual_color:
+        return template.format(query, actual_color)
+    else:
+        return template.format(query, closest_color)
 
 
 def is_there(query, image):
