@@ -21,6 +21,7 @@ def health():
 def index():
     print(request.data)
     print(request.files)
+    print(request.data)
     if 'image' in request.files:
         image = request.files['image']
     else:
