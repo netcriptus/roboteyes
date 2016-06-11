@@ -28,3 +28,4 @@ nltk==3.2.1
 pyyaml==3.11
 scipy==0.17.1
 scikit_learn==0.17.1
+fuzzywuzzy==0.10.0
