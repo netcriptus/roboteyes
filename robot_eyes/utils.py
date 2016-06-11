@@ -73,7 +73,8 @@ def what_color(query, image):
 
 def is_there(query, image):
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
-    descriptions += [item['description'].lower() for item in image['logoAnnotations']]
+    key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
+    descriptions += [item['description'].lower() for item in image[key]]
     query_terms = query.split()
     return any(term.lower() in descriptions for term in query_terms)
 
