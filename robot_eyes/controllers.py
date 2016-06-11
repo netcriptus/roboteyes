@@ -2,11 +2,11 @@ from watson_developer_cloud import VisualRecognitionV3, NaturalLanguageClassifie
 from flask import Blueprint, request, Response, jsonify
 
 import base64
-#import httplib2
 
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 from wit import Wit
+from .utils import analyze
 
 controllers = Blueprint('controllers', __name__)
 
@@ -20,7 +20,9 @@ def health():
 def index():
     image = request.files['image']
     question = request.form['question']
-    response = query_google_vision_api(image)
+    annotated_image = query_google_vision_api(image)
+    user_query = query_witai(question)
+    response = analyze(user_query, annotated_image)
 
     # for annotation in response['responses'][0]['textAnnotations']:
     #     print(annotation['description'])
@@ -30,7 +32,7 @@ def index():
 
 def query_google_vision_api(image):
     credentials = GoogleCredentials.get_application_default()
-    discovery_url='https://{api}.googleapis.com/$discovery/rest?version={apiVersion}'
+    discovery_url = 'https://{api}.googleapis.com/$discovery/rest?version={apiVersion}'
 
     service = discovery.build('vision', 'v1', credentials=credentials,
                               discoveryServiceUrl=discovery_url)
@@ -38,27 +40,13 @@ def query_google_vision_api(image):
     image_content = base64.b64encode(image.stream.read())
     service_request = service.images().annotate(body={
         'requests': [{
-            'image': {
-                'content': image_content.decode('UTF-8')
-            },
-            'features': [{
-                'type': 'TYPE_UNSPECIFIED'
-            },
-            {
-                'type': 'LANDMARK_DETECTION'
-            },
-            {
-                'type': 'LOGO_DETECTION'
-            },
-            {
-                'type': 'LABEL_DETECTION'
-            },
-            {
-                'type': 'TEXT_DETECTION'
-            },
-            {
-                'type': 'IMAGE_PROPERTIES'
-            }]
+            'image': {'content': image_content.decode('UTF-8')},
+            'features': [{'type': 'TYPE_UNSPECIFIED'},
+                         {'type': 'LANDMARK_DETECTION'},
+                         {'type': 'LOGO_DETECTION'},
+                         {'type': 'LABEL_DETECTION'},
+                         {'type': 'TEXT_DETECTION'},
+                         {'type': 'IMAGE_PROPERTIES'}]
         }]
     })
     response = service_request.execute()
