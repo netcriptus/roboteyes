@@ -32,7 +32,10 @@ def what_color(query, image):
 
 
 def is_there(query, image):
-    return ''
+    descriptions = [item['description'].lower() for item in image['responses'][0]['textAnnotations'][1:]]
+    descriptions += [item['description'].lower() for item in image['responses'][0]['labelAnnotations']]
+    query_terms = query.split()
+    return any(term.lower() in descriptions for term in query_terms)
 
 
 query_classes = {'WhereIs': where_is,
