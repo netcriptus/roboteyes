@@ -11,12 +11,12 @@ def analyze(user_query, annotated_image):
 
     query_class = user_query['entities']['category'][0]['value']
     search_query = None
-    if 'search_query' in user_query:
-        if user_query['search_query']['confidence'] < MIN_ACCURACY:
+    if 'search_query' in user_query['entities']:
+        if user_query['entities']['search_query'][0]['confidence'] < MIN_ACCURACY:
             return BAD_QUESTION
-        search_query = user_query['search_query']['value']
+        search_query = user_query['entities']['search_query'][0]['value']
 
-    return query_classes[query_class].__call__(user_query, annotated_image)
+    return query_classes[query_class].__call__(search_query, annotated_image)
 
 
 def where_is(query, image):
