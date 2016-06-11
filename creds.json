@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "wired-epsilon-133923",
+  "private_key_id": "76a1be657f22d23b1fefb4918d59b5e50366bcde",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCJTT0+edctxwPA\nNd5FXzKn5PI0w4yxTkqZ6a4WeNTVrxal1FbQ8BI7Ra5J61aUhodozZ9g8RzZQSyW\ndbMja2FbgI0nnuZTpBwqJdNgdo8Xkj05dpEoTtV0Ivj6hytALjLnANnWin+Ddf7S\ntLJ90GhTGEucRmZ4eOQMmGfWE3kyQwoA+PJ+robWqbkloWx4DKoQNlF3MchWOwRc\n1hULxOPuD2SllzRoiKR6Sbaf2ClwxJJfFjGgQG073g8CeXX4FnVSfJPcVvIp1Lu4\nc1xydOBw1ccpJebIr/fNwA8HgERHaoaeFEpgsD6VKPQUU1a9K2eZK3QKHqxPEMSI\nXZmL3pQLAgMBAAECggEAHHErpq2Graz0UfTWvngh/jWnFtcLZg9Z1Nhbf7w4GqvS\nfTenZFDW9gBRQm7F2K6ljkhKI8LOvxKJMgHfwg6UdGgE1ZhNDjaIvxJm3yywJ6nb\nlPPCzh7GiPBVs1Ac3Ya0dLXwakj2cT0YNH3KG9X4Rn5Z612KDJq+Yv2PRQFzsb1z\nrqT/4gDbBeLQ3Wdk/TxKP+rlOIIsXXwcjaiiUYBpFwIumhTtg9VjJCb41VD6BsBm\nacUoPzlHvgmDaxx4UF8SO7lRD28ka7SrgBfcfC1PrI+T3INUqbxkaGAuiDriC/VI\nuXyXlb2AtZWyitFwX0riZrGZQ4/XnuqBo8u0nKzNQQKBgQDDjl24UXsLIFCLK5gw\nK2P0rOjYS/9CPHw5YRGU0+sqU34E5INdFeItaQU+ogV34oeRqLUc4CLerLFSSoOC\nRNq5Tdh9eslYp0uF5Ho4+yROkd32PeXl2ya/dBXVEz0+7BI64t2C18G2RCgx0lwR\n6pPg47IJEOHpoTMJAr6W1qpYnQKBgQCzvWrUq5psDBMOSwo/FBCBkMN+1kcZV0jv\n6NAd+L3rPvABPSoGOWcgJXEtsLPH4x+jvsJ+t/DFyO2nDygfNK2Ul6g4nGHuFeZ0\nCoTk76mm9I3ohqU0bK+5Fw01HnlvuyZs8UU9wsORdddsHC1djIi15YV8rVYx4d7t\nydt+2pbaxwKBgEmP62djl0KXNFU13/j2yZIH3UtIQ0xaTmyTPDbdBRCV+cjDYTsJ\n+VwVrnhiIGZ5m3/Kk9653cQf+FA5YYEGf7THONHy93zW6c0DJor6xiycKH/xxuKR\nbuEEPRY7N4XM7gqivqrymJcEyo37UNEYiepGHPnWFPV6wyT3mFRLiibtAoGAN4ST\ngfs7aJJWNH0DPjahXpPrfrsLHQ2z7r63wfo6F3bKRWeyGlgSvYAzNEy3S0+hTz+1\n7dQ9H6qPlaF94B2yXAp4IHxVV2gWVdOF9vz8JyC00JT+ZHIJ2R8Aql6uXc+t78qa\ne5g0NjLzBmaxsIqfE6hAkiEsVZ4R8Nr/3HACVrMCgYEAg82q9Y8hYQMqt5TxIeO8\n/PB3CKhi2wQ/9LBodcmR23XR7frUR3ydN/blQDXUHgpq20yTcCMaV2QDMlNH9FCK\nipqqW6hIbP7gf2jWrztZNaHWAxLNcqiSCXmVfIFb17VRTn+vz1LLoiIntgiw2+uW\nHyCd+0AsdI9ItLBfncVMBlo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "hackpi@wired-epsilon-133923.iam.gserviceaccount.com",
+  "client_id": "115581403949583524618",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hackpi%40wired-epsilon-133923.iam.gserviceaccount.com"
+}
