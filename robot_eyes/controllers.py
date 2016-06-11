@@ -20,12 +20,9 @@ def health():
 def index():
     image = request.files['image']
     question = request.form['question']
-    annotated_image = query_google_vision_api(image)
+    annotated_image = query_google_vision_api(image)['responses'][0]
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image)
-
-    # for annotation in response['responses'][0]['textAnnotations']:
-    #     print(annotation['description'])
 
     return jsonify(response)
 
