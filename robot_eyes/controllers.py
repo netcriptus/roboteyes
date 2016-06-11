@@ -24,7 +24,7 @@ def index():
     else:
         image = request.form['image_url']
     question = request.form['question']
-    annotated_image = query_google_vision_api(image)
+    annotated_image = query_google_vision_api(image)['responses'][0]
 
     print(request.form)
 
@@ -33,9 +33,6 @@ def index():
 
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image)
-
-    # for annotation in response['responses'][0]['textAnnotations']:
-    #     print(annotation['description'])
 
     return jsonify(response)
 
