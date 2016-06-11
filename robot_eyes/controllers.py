@@ -1,4 +1,4 @@
-from watson_developer_cloud import VisualRecognitionV3
+from watson_developer_cloud import VisualRecognitionV3, NaturalLanguageClassifierV1
 from flask import Blueprint, request, Response, jsonify
 
 import base64
@@ -6,7 +6,7 @@ import base64
 
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
-
+from wit import Wit
 
 controllers = Blueprint('controllers', __name__)
 
@@ -63,3 +63,8 @@ def query_google_vision_api(image):
     })
     response = service_request.execute()
     return response
+
+
+def query_witai(message):
+    client = Wit('KZSEARP55DDI6JPLDNHJHWBKQKECHWGH', {})
+    return client.message(message)
