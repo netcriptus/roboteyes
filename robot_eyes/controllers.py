@@ -19,7 +19,8 @@ def health():
 
 @controllers.route("/", methods=["POST"])
 def index():
-    print(request.__dict__)
+    print(request.data)
+    print(request.files)
     if 'image' in request.files:
         image = request.files['image']
     else:
