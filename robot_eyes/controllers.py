@@ -1,3 +1,4 @@
+import requests
 from watson_developer_cloud import VisualRecognitionV3, NaturalLanguageClassifierV1
 from flask import Blueprint, request, Response, jsonify
 
@@ -18,9 +19,18 @@ def health():
 
 @controllers.route("/", methods=["POST"])
 def index():
-    image = request.files['image']
+    if 'image' in request.files:
+        image = request.files['image']
+    else:
+        image = request.form['image_url']
     question = request.form['question']
     annotated_image = query_google_vision_api(image)
+
+    print(request.form)
+
+    if "error" in annotated_image["responses"][0]:
+        return jsonify("Please send me what you are seeing!")
+
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image)
 
@@ -37,7 +47,11 @@ def query_google_vision_api(image):
     service = discovery.build('vision', 'v1', credentials=credentials,
                               discoveryServiceUrl=discovery_url)
 
-    image_content = base64.b64encode(image.stream.read())
+    if isinstance(image, str):
+        image_content = base64.b64encode(requests.get(image).raw.read())
+    else:
+        image_content = base64.b64encode(image.stream.read())
+    print(image_content)
     service_request = service.images().annotate(body={
         'requests': [{
             'image': {'content': image_content.decode('UTF-8')},
