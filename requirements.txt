@@ -24,3 +24,5 @@ traitlets==4.2.1
 watson-developer-cloud==0.13.0
 Werkzeug==0.11.10
 wit==3.5.0
+google-api-python-client==1.5.1
+webcolors==1.5
