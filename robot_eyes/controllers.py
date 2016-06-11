@@ -19,6 +19,7 @@ def health():
 
 @controllers.route("/", methods=["POST"])
 def index():
+    print(request.__dict__)
     if 'image' in request.files:
         image = request.files['image']
     else:
@@ -27,12 +28,12 @@ def index():
 
     result = query_google_vision_api(image)
 
+    print(result)
+
     if "error" in result["responses"][0]:
         return jsonify("Please send me what you are seeing!")
 
     annotated_image = result['responses'][0]
-
-    print(request.form)
 
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image)
