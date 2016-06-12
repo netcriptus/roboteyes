@@ -106,11 +106,19 @@ def what_color(query, image, raw_image):
 
     actual_color, closest_color = get_color_name((primary_color["color"]["red"], primary_color["color"]["green"],
                                                   primary_color["color"]["blue"]))
-    template = "It seems your {} is {}"
-    if actual_color:
-        return template.format(query, actual_color)
+
+    if query:
+        template = "It seems your {} is {}"
+        if actual_color:
+            return template.format(query, actual_color)
+        else:
+            return template.format(query, closest_color)
     else:
-        return template.format(query, closest_color)
+        template = "It seems this is {}"
+        if actual_color:
+            return template.format(actual_color)
+        else:
+            return template.format(closest_color)
 
 
 def is_there(query, image, raw_image):
