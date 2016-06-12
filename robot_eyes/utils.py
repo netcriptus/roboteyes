@@ -1,7 +1,6 @@
 import webcolors
 from fuzzywuzzy import fuzz
 from wand.image import Image
-from webcolors import rgb_to_name
 
 BAD_QUESTION = 'Can you rephrase that question?'
 MIN_ACCURACY = 0.6
@@ -133,7 +132,15 @@ def is_there(query, image, raw_image):
     return "Yes, got it!" if found else "No, I'm sorry ..."
 
 
+def what_does_it_say(query, image, raw_image):
+    if not 'textAnnotations' in image:
+        return "Nothing :)"
+
+    return [item["description"] for item in image["textAnnotations"]]
+
+
 query_classes = {'WhereIs': where_is,
                  'WhatDoYouSee': what_do_you_see,
                  'WhatColor': what_color,
-                 'IsThere': is_there}
+                 'IsThere': is_there,
+                 "WhatDoesItSay": what_does_it_say}
