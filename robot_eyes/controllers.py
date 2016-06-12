@@ -24,12 +24,15 @@ def index():
     else:
         image = request.form['image_url']
     question = request.form['question']
-    annotated_image = query_google_vision_api(image)['responses'][0]
 
-    print(request.form)
+    result = query_google_vision_api(image)
 
-    if "error" in annotated_image:
-        return jsonify("Please send me a picture!")
+    print(result)
+
+    if "error" in result["responses"][0]:
+        return jsonify("Please send me what you are seeing!")
+
+    annotated_image = result['responses'][0]
 
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image, image)

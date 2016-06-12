@@ -6,7 +6,6 @@ __version__ = '0.1.0'
 
 db = SQLAlchemy()
 
-
 def create_app():
     app = Flask(__name__)
 
@@ -22,3 +21,5 @@ def create_app():
     app.secret_key = uuid4().hex
 
     return app
+
+app = create_app()
