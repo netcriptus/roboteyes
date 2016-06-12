@@ -53,6 +53,9 @@ def center(min_pos, max_pos):
 
 
 def where_is(query, image, raw_image):
+    if "textAnnotations" not in image:
+        return "Sorry, I can't find it right now :("
+
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]
