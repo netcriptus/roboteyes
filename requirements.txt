@@ -27,3 +27,4 @@ wit==3.5.0
 google-api-python-client==1.5.1
 Wand==0.4.3
 webcolors==1.5
+gunicorn
