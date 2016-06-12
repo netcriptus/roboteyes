@@ -1,11 +1,12 @@
 import webcolors
+from wand.image import Image
 from webcolors import rgb_to_name
 
 BAD_QUESTION = 'Can you rephrase that question?'
 MIN_ACCURACY = 0.6
 
 
-def analyze(user_query, annotated_image):
+def analyze(user_query, annotated_image, raw_image):
     if 'category' not in user_query['entities']:
         return BAD_QUESTION
 
@@ -19,7 +20,7 @@ def analyze(user_query, annotated_image):
             return BAD_QUESTION
         search_query = user_query['entities']['search_query'][0]['value']
 
-    return query_classes[query_class].__call__(search_query, annotated_image)
+    return query_classes[query_class].__call__(search_query, annotated_image, raw_image)
 
 
 def closest_color(requested_color):
@@ -42,17 +43,52 @@ def get_color_name(requested_color):
     return actual_name, closest_name
 
 
-def where_is(query, image):
-    return ''
+def center(min_pos, max_pos):
+    distance = max_pos - min_pos
+    return max_pos - distance/2
 
 
-def what_do_you_see(query, image):
+def where_is(query, image, raw_image):
+    descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
+    key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
+    descriptions += [item['description'].lower() for item in image[key]]
+    if query.lower() not in descriptions:
+        return 'I could not find {} in this picture'.format(query)
+    all_items = image['textAnnotations'][1:] + image[key]
+    for item in all_items:
+        if item['description'].lower() == query.lower():
+            item_position = item['boundingPoly']['vertices']
+            break
+    x_coord = [pos['x'] for pos in item_position]
+    y_coord = [pos['y'] for pos in item_position]
+    item_center = {'x': center(min(x_coord), max(x_coord)), 'y': center(min(y_coord), max(y_coord))}
+    raw_image.seek(0)
+    img = Image(file=raw_image)
+
+    if item_center['y'] == img.page_height/2:
+        vertical = 'center'
+    elif item_center['y'] < img.page_height/2:
+        vertical = 'upper'
+    else:
+        vertical = 'lower'
+
+    if item_center['x'] == img.page_width/2:
+        horizontal = 'center'
+    elif item_center['x'] < img.page_width/2:
+        horizontal = 'left'
+    else:
+        horizontal = 'right'
+
+    return 'I see {0} on the {1} {2} of the image'.format(query, vertical, horizontal)
+
+
+def what_do_you_see(query, image, raw_image):
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     items = [item['description'].lower() for item in image[key]]
     return 'I see the following:\n {}'.format('\n'.join(items))
 
 
-def what_color(query, image):
+def what_color(query, image, raw_image):
     # Get the colors
     colors = image["imagePropertiesAnnotation"].get("dominantColors")
     if not colors:
@@ -71,7 +107,7 @@ def what_color(query, image):
         return template.format(query, closest_color)
 
 
-def is_there(query, image):
+def is_there(query, image, raw_image):
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]

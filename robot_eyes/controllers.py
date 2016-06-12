@@ -28,11 +28,11 @@ def index():
 
     print(request.form)
 
-    if "error" in annotated_image["responses"][0]:
-        return jsonify("Please send me what you are seeing!")
+    if "error" in annotated_image:
+        return jsonify("Please send me a picture!")
 
     user_query = query_witai(question)
-    response = analyze(user_query, annotated_image)
+    response = analyze(user_query, annotated_image, image)
 
     return jsonify(response)
 
