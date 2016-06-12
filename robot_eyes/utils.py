@@ -8,15 +8,18 @@ MIN_ACCURACY = 0.6
 
 def analyze(user_query, annotated_image, raw_image):
     if 'category' not in user_query['entities']:
+        print("Not enough confident for {}".format(user_query))
         return BAD_QUESTION
 
     if user_query['entities']['category'][0]['confidence'] < MIN_ACCURACY:
+        print("Not enough confident for {}".format(user_query))
         return BAD_QUESTION
 
     query_class = user_query['entities']['category'][0]['value']
     search_query = None
     if 'search_query' in user_query['entities']:
         if user_query['entities']['search_query'][0]['confidence'] < MIN_ACCURACY:
+            print("Not enough confident for {}".format(user_query))
             return BAD_QUESTION
         search_query = user_query['entities']['search_query'][0]['value']
 
