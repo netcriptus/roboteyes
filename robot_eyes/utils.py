@@ -1,4 +1,5 @@
 import webcolors
+from fuzzywuzzy import fuzz
 from wand.image import Image
 from webcolors import rgb_to_name
 
@@ -55,13 +56,15 @@ def where_is(query, image, raw_image):
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]
-    if query.lower() not in descriptions:
+    if not any(fuzz.partial_ratio(query.lower(), description) >= 70 for description in descriptions):
         return 'I could not find {} in this picture'.format(query)
     all_items = image['textAnnotations'][1:] + image[key]
+    confidence = 0
     for item in all_items:
-        if item['description'].lower() == query.lower():
+        match = fuzz.partial_ratio(item['description'].lower(), query.lower())
+        if match >= 70 and match > confidence:
             item_position = item['boundingPoly']['vertices']
-            break
+            confidence = match
     x_coord = [pos['x'] for pos in item_position]
     y_coord = [pos['y'] for pos in item_position]
     item_center = {'x': center(min(x_coord), max(x_coord)), 'y': center(min(y_coord), max(y_coord))}
@@ -82,13 +85,13 @@ def where_is(query, image, raw_image):
     else:
         horizontal = 'right'
 
-    return 'I see {0} on the {1} {2} of the image'.format(query, vertical, horizontal)
+    return 'I see {0} on the {1} {2}'.format(query, vertical, horizontal)
 
 
 def what_do_you_see(query, image, raw_image):
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     items = [item['description'].lower() for item in image[key]]
-    return 'I see the following:\n {}'.format('\n'.join(items))
+    return 'I see:\n {}'.format('\n'.join(items))
 
 
 def what_color(query, image, raw_image):
@@ -103,7 +106,7 @@ def what_color(query, image, raw_image):
 
     actual_color, closest_color = get_color_name((primary_color["color"]["red"], primary_color["color"]["green"],
                                                   primary_color["color"]["blue"]))
-    template = "It seem your {} is {}"
+    template = "It seems your {} is {}"
     if actual_color:
         return template.format(query, actual_color)
     else:
@@ -114,8 +117,7 @@ def is_there(query, image, raw_image):
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]
-    query_terms = query.split()
-    return any(term.lower() in descriptions for term in query_terms)
+    return any(fuzz.partial_ratio(query.lower(), description) >= 70 for description in descriptions)
 
 
 query_classes = {'WhereIs': where_is,
