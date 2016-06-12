@@ -117,7 +117,9 @@ def is_there(query, image, raw_image):
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]
-    return any(fuzz.partial_ratio(query.lower(), description) >= 70 for description in descriptions)
+
+    found = any(fuzz.partial_ratio(query.lower(), description) >= 70 for description in descriptions)
+    return "Yes, got it!" if found else "No, I'm sorry ..."
 
 
 query_classes = {'WhereIs': where_is,

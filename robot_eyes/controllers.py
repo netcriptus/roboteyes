@@ -27,8 +27,6 @@ def index():
 
     result = query_google_vision_api(image)
 
-    print(result)
-
     if "error" in result["responses"][0]:
         return jsonify("Please send me an image!")
 
@@ -51,7 +49,6 @@ def query_google_vision_api(image):
         image_content = base64.b64encode(requests.get(image).raw.read())
     else:
         image_content = base64.b64encode(image.stream.read())
-    print(image_content)
     service_request = service.images().annotate(body={
         'requests': [{
             'image': {'content': image_content.decode('UTF-8')},
