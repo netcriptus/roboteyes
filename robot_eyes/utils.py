@@ -3,7 +3,7 @@ from fuzzywuzzy import fuzz
 from wand.image import Image
 
 BAD_QUESTION = 'Can you rephrase that question?'
-MIN_ACCURACY = 0.6
+MIN_ACCURACY = 0.58
 
 
 def analyze(user_query, annotated_image, raw_image):
