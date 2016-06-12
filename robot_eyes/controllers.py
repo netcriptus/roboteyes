@@ -37,7 +37,7 @@ def index():
     user_query = query_witai(question)
     response = analyze(user_query, annotated_image, image)
 
-    return jsonify(response)
+    return response
 
 
 def query_google_vision_api(image):
