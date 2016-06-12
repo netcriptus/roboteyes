@@ -30,7 +30,7 @@ def index():
     print(result)
 
     if "error" in result["responses"][0]:
-        return jsonify("Please send me what you are seeing!")
+        return jsonify("Please send me an image!")
 
     annotated_image = result['responses'][0]
 
