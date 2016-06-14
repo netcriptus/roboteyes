@@ -54,7 +54,11 @@ def center(min_pos, max_pos):
 
 
 def where_is(query, image, raw_image):
-    if "textAnnotations" not in image:
+    if 'textAnnotations' not in image:
+        if 'labelAnnotations' in image:
+            items = [item['description'].lower() for item in image['labelAnnotations']]
+            if query.lower() in items:
+                return "I can't tell the exact location of {} but it is in the picture.".format(query.lower())
         return "Sorry, I can't find it right now :("
 
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
@@ -71,8 +75,11 @@ def where_is(query, image, raw_image):
     for item in all_items:
         match = fuzz.partial_ratio(item['description'].lower(), query.lower())
         if match >= 70 and match > confidence:
-            item_position = item['boundingPoly']['vertices']
-            confidence = match
+            if 'boundingPoly' in item:
+                item_position = item['boundingPoly']['vertices']
+                confidence = match
+            else:
+                return "I can't tell the exact location of {} but it is in the picture.".format(query.lower())
     x_coord = [pos['x'] for pos in item_position]
     y_coord = [pos['y'] for pos in item_position]
     item_center = {'x': center(min(x_coord), max(x_coord)), 'y': center(min(y_coord), max(y_coord))}
@@ -109,7 +116,7 @@ def what_color(query, image, raw_image):
         return "I can't see any dominant color in here, put it closer please!"
 
     primary_color = colors["colors"][0]
-    if primary_color["score"] <= 0.3:
+    if primary_color["score"] <= 0.1:
         return "It seems to be quite colorful around here!"
 
     actual_color, closest_color = get_color_name((primary_color["color"]["red"], primary_color["color"]["green"],
