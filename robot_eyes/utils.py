@@ -59,6 +59,10 @@ def where_is(query, image, raw_image):
 
     descriptions = [item['description'].lower() for item in image['textAnnotations'][1:]]
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
+
+    # hotfix
+    if not key in image:
+        key = 'textAnnotations'
     descriptions += [item['description'].lower() for item in image[key]]
     if not any(fuzz.partial_ratio(query.lower(), description) >= 70 for description in descriptions):
         return 'I could not find {} in this picture'.format(query)
