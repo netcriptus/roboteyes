@@ -106,34 +106,43 @@ def where_is(query, image, raw_image):
 def what_do_you_see(query, image, raw_image):
     key = 'logoAnnotations' if 'logoAnnotations' in image else 'labelAnnotations'
     items = [item['description'].lower() for item in image[key]]
-    return 'I see:\n {}'.format('\n'.join(items))
+    return 'I see:\n{}'.format('\n'.join(items))
 
 
 def what_color(query, image, raw_image):
     # Get the colors
-    colors = image["imagePropertiesAnnotation"].get("dominantColors")
+    print(image["imagePropertiesAnnotation"])
+    colors = image["imagePropertiesAnnotation"]["dominantColors"]["colors"]
     if not colors:
         return "I can't see any dominant color in here, put it closer please!"
 
-    primary_color = colors["colors"][0]
-    if primary_color["score"] <= 0.1:
-        return "It seems to be quite colorful around here!"
 
-    actual_color, closest_color = get_color_name((primary_color["color"]["red"], primary_color["color"]["green"],
-                                                  primary_color["color"]["blue"]))
+    answer = "I can see the following dominant colors:"
+    for i in range(0,min(3, len(colors))):
+        actual_color, closest_color = get_color_name((colors[i]["color"]["red"], colors[i]["color"]["green"], colors[i]["color"]["blue"]))
+        answer += "\n{} ({}%)".format(actual_color or closest_color, int(colors[i]['pixelFraction'] * 100))
 
-    if query:
-        template = "It seems your {} is {}"
-        if actual_color:
-            return template.format(query, actual_color)
-        else:
-            return template.format(query, closest_color)
-    else:
-        template = "It seems this is {}"
-        if actual_color:
-            return template.format(actual_color)
-        else:
-            return template.format(closest_color)
+    return answer
+
+    # primary_color = colors[0]
+    # if primary_color["score"] <= 0.1:
+    #     return "It seems to be quite colorful around here!"
+
+    # actual_color, closest_color = get_color_name((primary_color["color"]["red"], primary_color["color"]["green"],
+    #                                               primary_color["color"]["blue"]))
+
+    # if query:
+    #     template = "It seems your {} is {}"
+    #     if actual_color:
+    #         return template.format(query, actual_color)
+    #     else:
+    #         return template.format(query, closest_color)
+    # else:
+    #     template = "It seems this is {}"
+    #     if actual_color:
+    #         return template.format(actual_color)
+    #     else:
+    #         return template.format(closest_color)
 
 
 def is_there(query, image, raw_image):
