@@ -111,7 +111,6 @@ def what_do_you_see(query, image, raw_image):
 
 def what_color(query, image, raw_image):
     # Get the colors
-    print(image["imagePropertiesAnnotation"])
     colors = image["imagePropertiesAnnotation"]["dominantColors"]["colors"]
     if not colors:
         return "I can't see any dominant color in here, put it closer please!"
